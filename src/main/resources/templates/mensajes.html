@@ -15,7 +15,21 @@
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
-  
+ 
+ 
+<script>
+
+	$(document).ready(function() {
+		$('#borrarUsuario').on('show.bs.modal', function(event) {
+			var button = $(event.relatedTarget) // Boton que activa el modal
+			var recipient = button.data('usuario') // Extrae la info del atributo data-*
+			// Actualizamos el contenido del modal.
+			var modal = $(this)
+			modal.find('.modal-title').text('Borrar usuario ' + recipient) // Cambio el titulo del modal
+			modal.find('.modal-body').replace('#username',recipient) // Coloco el id del usuario en el input oculto
+		})
+	})
+</script>  
 
 
 </head>
@@ -43,7 +57,31 @@
 				      <tr th:each="mensaje: ${mensajes}">
 				        <td th:text="${mensaje.id}"></td>
 				        <td th:text="${mensaje.texto}"></td>
-				        <td><a type="button" class="btn btn-danger btn-sm" th:href="@{/mensajes/borrar/{id}(id=${mensaje.id})}">Eliminar</a></td>
+				        <td>
+				        	<a type="button" class="btn btn-danger btn-sm" th:href="@{/mensajes/borrar/{id}(id=${mensaje.id})}">Eliminar</a>
+							<a type="button" class="btn btn-primary float-right" data-toggle="modal" th:attr="data-target='#modal-warning'+${mensaje.id}"><span class="glyphicon glyphicon-trash">B</span></a>
+				      	</td>
+				      	
+				      	
+				      	<div class="modal modal-warning fade in" th:id="modal-warning+${mensaje.id}" >
+						    <div class="modal-dialog">
+						        <div class="modal-content">
+						            <div class="modal-header">
+						                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						                    <span aria-hidden="true">×</span></button>
+						                <h5 class="modal-title">Delete User</h5>
+						            </div>
+						            <div class="modal-body">
+						                <h3>Are you sure want to delete this user?</h3>
+						            </div>
+						            <div class="modal-footer">
+						                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+						                <a type="button" class="btn btn-outline" th:href="@{/mensajes/borrar/{id}(id=${mensaje.id})}"><i class="fa fa-check"></i>&nbsp;Yes</a>
+						            </div>
+						        </div>
+						    </div>
+						</div>	
+				      	
 				      </tr>
 				    </table>
 			  </div>
@@ -96,6 +134,14 @@
 
 		<!-- Añadir carpeta modal -->
 
+
+	
+	
+	
+            <!-- Delete Modal-->
+
+	
+				
 
 
 </body>

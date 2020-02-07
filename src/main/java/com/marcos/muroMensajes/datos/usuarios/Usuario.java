@@ -1,15 +1,34 @@
 package com.marcos.muroMensajes.datos.usuarios;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.marcos.muroMensajes.roles.Rol;
+
+import javassist.bytecode.Descriptor.Iterator;
 
 
 
@@ -17,6 +36,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class Usuario implements UserDetails  {
 
 	
+
+
 	@Id
 	private String usuario;
 	
@@ -32,10 +53,21 @@ public class Usuario implements UserDetails  {
 	@Column
 	private String email;
 
+	@ManyToOne
+	private Rol rol = new Rol();	
 	
 	
 	
+
 	
+	public Rol getRol() {
+		return rol;
+	}
+
+	public void setRoles(Rol rol) {
+		this.rol = rol;
+	}
+
 	public String getUsuario() {
 		return usuario;
 	}
@@ -82,8 +114,13 @@ public class Usuario implements UserDetails  {
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+
+		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+	    grantedAuthorities.add(new SimpleGrantedAuthority(rol.getNombre()));
+	    	    
+	    return grantedAuthorities;
 	}
+	
 
 	@Override
 	public String getUsername() {
@@ -109,9 +146,9 @@ public class Usuario implements UserDetails  {
 	public boolean isEnabled() {
 		return true;
 	}
-	
-	
-	
+
+
+
 	
 
 	

@@ -13,7 +13,7 @@ import com.marcos.muroMensajes.servicios.Autenticacion;
 
 
 @Configuration
-@EnableWebSecurity(debug=true)
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter  {
 
 	

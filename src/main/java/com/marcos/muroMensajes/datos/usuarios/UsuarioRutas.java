@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.marcos.muroMensajes.roles.Rol;
+import com.marcos.muroMensajes.roles.RolDAO;
 
 
 
@@ -21,6 +25,9 @@ public class UsuarioRutas {
 	@Autowired
 	private UsuarioDAO usuarioDAO;
 
+	@Autowired
+	private RolDAO rolDAO;	
+	
 	
 	
 	@GetMapping("/usuarios")
@@ -33,27 +40,57 @@ public class UsuarioRutas {
 		List<Usuario> listaUsuarios = (List<Usuario>)usuarioDAO.findAll();
 		mav.addObject("usuarios",listaUsuarios);
 		
+		List<Rol> listaRoles = (List<Rol>)rolDAO.findAll();
+		mav.addObject("roles",listaRoles);
+
 		return mav;
 	}
-	
-	
 	
 	
 	
 	@PostMapping("/usuarios/anadir")
 	public String usuariosAnadir(@ModelAttribute Usuario usuario) {
 		
-		//BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		//usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+		usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+		
 		usuarioDAO.save(usuario);
 		
 		return "redirect:/usuarios";
 	}
 	
+
+	
+	@PostMapping("/usuarios/editar")
+	public String usuariosEditar(@ModelAttribute Usuario usuario) {
+		
+
+		usuarioDAO.save(usuario);
+		
+		return "redirect:/usuarios";
+	}	
+
+	
+	@GetMapping("/usuarios/editar/{id}")
+	public ModelAndView usuariosEditar(@PathVariable String id) {
+		
+		Usuario user = usuarioDAO.findById(id).get();
+		
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("editarUser");
+		mav.addObject("user",user);
+		
+		List<Rol> listaRoles = (List<Rol>)rolDAO.findAll();
+		mav.addObject("roles",listaRoles);
+		
+		return mav;
+	}	
+	
+
 	
 	
 	
-	
+
 	@GetMapping("/usuarios/borrar/{id}")
 	public String usuariosBorrar(@PathVariable String id) {
 		
